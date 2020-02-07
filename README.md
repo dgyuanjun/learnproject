@@ -17,7 +17,7 @@ List<User> query(@Param("tbName") String tbName, @Param("userId") String userId)
 采用注解+mybatis插件实现
 四、实现步骤
 1.注解（灵活使用，需要分表的dao添加注解）
-
+```java
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface TableShard {
@@ -28,18 +28,20 @@ public @interface TableShard {
 
     StrategyType tableStrategyType();
 }
+```
 2.mybatis插件
 
 1）实现Interceptor，并添加插件的注解，添加拦截点
+```java
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
-
+```
 2）获取StatementHandler，并转化成MetaObject，便于获取属性
-
+```java
 StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
 MetaObject metaObject = MetaObject.forObject(statementHandler, SystemMetaObject.DEFAULT_OBJECT_FACTORY, SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY, new DefaultReflectorFactory());
-        
+```        
 3）MappedStatement-》获取命名空间-》找到dao类-》获取注解
-
+```java
  private TableShard getTableShardAnnotation(MetaObject metaStatementHandler) throws ClassNotFoundException {
         // get sql xml info
         MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
@@ -50,8 +52,9 @@ MetaObject metaObject = MetaObject.forObject(statementHandler, SystemMetaObject.
         // judge contain tableShard annotation
         return targetClass.getAnnotation(TableShard.class);
     }
+ ```
 4）metaObject-》获取sql + 执行参数 -》根据注解的参数+策略 生成新的表名 -》替换表名
-``` 
+```java
  private void rebuildSql(MetaObject metaStatementHandler) throws ClassNotFoundException {
         log.info("mybatis rebuild sql start");
         TableShard tableShard = getTableShardAnnotation(metaStatementHandler);
