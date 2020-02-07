@@ -17,7 +17,7 @@ List<User> query(@Param("tbName") String tbName, @Param("userId") String userId)
 采用注解+mybatis插件实现
 四、实现步骤
 1.注解（灵活使用，需要分表的dao添加注解）
-```java
+```
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface TableShard {
@@ -32,7 +32,7 @@ public @interface TableShard {
 2.mybatis插件
 
 1）实现Interceptor，并添加插件的注解，添加拦截点
-```java
+```
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 ```
 2）获取StatementHandler，并转化成MetaObject，便于获取属性
