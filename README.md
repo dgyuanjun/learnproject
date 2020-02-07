@@ -1,10 +1,11 @@
 # learnproject
-##mysql自动分表实现
-###一、实现原理
+## mysql自动分表实现
+### 一、实现原理
    通过mybatis的插件拦截执行的sql语句，根据策略得到具体的表名，替换sql里的表名，从而达到自动分表的效果，在次过程中对Dao无侵入性，不需要关注
 表名的逻辑处理。
-###二、手动分表的实现(背景：根据userId进行分表)
+### 二、手动分表的实现(背景：根据userId进行分表)
 1.以查询为例(dao层传入表名和查询参数)
+
 mybatis #{} ->参数占位符，对数据加引号处理，会对参数进行检查，可以防止sql注入
         ${} ->替换sql里的参数，简单的字符串替换，需要手动防止sql注入，在这里表名需要用${}处理
         
@@ -15,12 +16,12 @@ List<User> query(@Param("tbName") String tbName, @Param("userId") String userId)
  
 2.问题，表名处理繁琐特别对于插入操作，使用注解替代xml实现不好写，而且增加dao的逻辑
 3.能否自动处理表名
-###三、自动分表的实现原理
+### 三、自动分表的实现原理
 采用注解+mybatis插件实现
-###四、实现步骤
+### 四、实现步骤
 1.注解（灵活使用，需要分表的dao添加注解）
 
-```
+```java
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface TableShard {
@@ -37,7 +38,7 @@ public @interface TableShard {
 
 1）实现Interceptor，并添加插件的注解，添加拦截点
 
-```
+```java
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 ```
 
