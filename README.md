@@ -7,10 +7,10 @@
 1.以查询为例(dao层传入表名和查询参数)
 mybatis #{} ->参数占位符，对数据加引号处理，会对参数进行检查，可以防止sql注入
         ${} ->替换sql里的参数，简单的字符串替换，需要手动防止sql注入，在这里表名需要用${}处理
-
+ ``` sql
 @Select("select * from ${tbName} where user_id=#{userId}")
 List<User> query(@Param("tbName") String tbName, @Param("userId") String userId);
-  
+ ```
 2.问题，表名处理繁琐特别对于插入操作，使用注解替代xml实现不好写，而且增加dao的逻辑
 3.能否自动处理表名
 三、自动分表的实现原理
