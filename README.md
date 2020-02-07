@@ -7,7 +7,7 @@
 1.以查询为例(dao层传入表名和查询参数)
 mybatis #{} ->参数占位符，对数据加引号处理，会对参数进行检查，可以防止sql注入
         ${} ->替换sql里的参数，简单的字符串替换，需要手动防止sql注入，在这里表名需要用${}处理
- ``` sql
+ ``` 
 @Select("select * from ${tbName} where user_id=#{userId}")
 List<User> query(@Param("tbName") String tbName, @Param("userId") String userId);
  ```
@@ -51,6 +51,7 @@ MetaObject metaObject = MetaObject.forObject(statementHandler, SystemMetaObject.
         return targetClass.getAnnotation(TableShard.class);
     }
 4）metaObject-》获取sql + 执行参数 -》根据注解的参数+策略 生成新的表名 -》替换表名
+``` 
  private void rebuildSql(MetaObject metaStatementHandler) throws ClassNotFoundException {
         log.info("mybatis rebuild sql start");
         TableShard tableShard = getTableShardAnnotation(metaStatementHandler);
@@ -72,4 +73,5 @@ MetaObject metaObject = MetaObject.forObject(statementHandler, SystemMetaObject.
         }
 
     }
+  ```
 5）参数值的获取，map key+ 对象字段名匹配
